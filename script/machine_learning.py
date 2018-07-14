@@ -5,7 +5,7 @@ import argparse
 import pickle
 import numpy as np
 from PIL import Image
-from sklearn.utils import shuffle
+from sklearn.model_selection import train_test_split
 import keras
 from keras.preprocessing.image import load_img, img_to_array
 from keras.models import Sequential
@@ -46,10 +46,7 @@ def load_data(categories, filter = 20):
 
     y = keras.utils.to_categorical(y, len(categories))
 
-    x, y = shuffle(x, y, random_state=0)
-    threshold = int(x.shape[0] * 0.8)
-
-    return (x[:threshold] ,y[:threshold]), (x[threshold:], y[threshold:])
+    return train_test_split(x, y, test_size=0.2)
 
 def define_model(categories):
     model = Sequential()
@@ -81,21 +78,21 @@ def main():
 
     categories = category_list(args.categories)
 
-    (x_train, y_train), (x_test, y_test) = load_data(categories)
+    X_train, X_test, y_train, y_test = load_data(categories)
 
     callbacks = [keras.callbacks.TensorBoard(log_dir="/workspace/__tmp/", histogram_freq=1)]
 
     model = define_model(categories)
     #model.summary()
 
-    history = model.fit(x_train, y_train,
+    history = model.fit(X_train, y_train,
         batch_size=int(args.batch_size),
         epochs=int(args.epochs),
         verbose=1,
         callbacks=callbacks,
-        validation_data=(x_test, y_test))
+        validation_data=(X_test, y_test))
 
-    score = model.evaluate(x_test, y_test, verbose=0)
+    score = model.evaluate(X_test, y_test, verbose=0)
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
 
@@ -105,5 +102,5 @@ def main():
                 pickle.dump(history.history, f)
 
 if __name__ == '__main__':
-      main()
+    main()
 
