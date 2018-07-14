@@ -16,7 +16,7 @@ IMAGE_PARENT_DIR = '/workspace/image/kakou'
 IMAGE_SIZE = 28
 
 def images(category):
-    return glob.glob(os.path.join(\
+    return glob.glob(os.path.join(
         '%s/%s' % (IMAGE_PARENT_DIR, category), '*.jpg'))
 
 def category_list(comma_separatted_string):
@@ -27,7 +27,7 @@ def category_list(comma_separatted_string):
     return categories
 
 def to_nparray(image):
-    return img_to_array(\
+    return img_to_array(
         load_img(image, grayscale=True, target_size=(IMAGE_SIZE, IMAGE_SIZE)))
 
 def load_data(categories, filter = 20):
@@ -99,7 +99,7 @@ def main():
     model.save('/workspace/models/ml.model.h5')
 
     with open('/workspace/__tmp/ml.history.pickle', 'wb') as f:
-                pickle.dump(history.history, f)
+        pickle.dump(history.history, f)
 
 if __name__ == '__main__':
     main()
